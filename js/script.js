@@ -125,3 +125,37 @@ $('.activities').on('click', (e) => {
         $('.activities p').hide();
     }
 });
+
+//add the hidden attribute to "Select Payment Method" option 
+//so that an user should select one of payment options
+$('#payment option:first').attr('hidden', true);
+
+//make the credit card payment as default option and display only the credit card infomation
+$('option[value="credit card"]').attr('selected', true);
+$('#credit-card').next().attr('hidden', true);
+$('#credit-card').next().next().attr('hidden', true);
+
+//add an event listener to Payment Info section
+$('#payment').on('change', (e) => {
+    //get the value of value attributes and assign to a variable
+    const $payment= $('#payment option:selected').attr('value');
+    //set conditional statements to display payment infomation by conditions
+    switch($payment) {
+        case 'credit card':
+            $('#credit-card').attr('hidden', false);
+            $('#credit-card').next().attr('hidden', true);
+            $('#credit-card').next().next().attr('hidden', true);
+            break;
+        case 'paypal':
+            $('#credit-card').attr('hidden', true);
+            $('#credit-card').next().attr('hidden', false);
+            $('#credit-card').next().next().attr('hidden', true);
+            break;
+        case 'bitcoin':
+            $('#credit-card').attr('hidden', true);
+            $('#credit-card').next().attr('hidden', true);
+            $('#credit-card').next().next().attr('hidden', false);
+            break;
+    }
+});
+
