@@ -113,6 +113,19 @@ button:hover {
 	background: #184c62;
 }
 
+span {
+	border-radius: 5px;
+	display: none;
+	font-size: 1em;
+	text-align: center;
+	background: #ca9c85;
+	width: 100%;
+	margin-top: -10px; 
+	margin-bottom: 1.125em;	
+	padding: 7px 10px;
+	color: #683318;
+  }
+
 /* ================================= 
   Page Styles
 ==================================== */

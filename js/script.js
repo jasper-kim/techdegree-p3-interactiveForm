@@ -159,3 +159,75 @@ $('#payment').on('change', (e) => {
     }
 });
 
+//append error messages to each input section
+$('<span>Please, enter your name.</span>').insertAfter('#name');
+$('<span>Please, enter a valid email. ex) example@domain.com</span>').insertAfter('#mail');
+$('<span>Please, select at least one activity.</span>').insertAfter('.activities legend');
+$('<span>Enter between 13 and 16 digit number.</span>').insertAfter('#cc-num');
+$('<span>Enter 5-digit number.</span>').insertAfter('#zip');
+$('<span>Enter 3-digit number.</span>').insertAfter('#cvv');
+
+//make functions to check each 
+function isValidUsername(username) {
+    return /^[a-zA-Z_]+$/.test(username);
+}
+function isValidEmail(email) {
+    return /^[^@]+@[^@.]+\.[a-z]+$/i.test(email);
+}
+function isValidCheckbox() {
+    return $('input[type="checkbox"]:checked').length > 0;
+}
+function isValidCardNum(number) {
+    return /\d{13,16}/.test(number);
+}
+function isValidZipCode(number) {
+    return /\d{5}/.test(number);
+}
+function isValidCVV(number) {
+    return /\d{3}/.test(number);
+}
+
+//when the register button is clicked, check validation of all the input section
+//if all the input valid, let the page reload
+//if not, prevent submitting the form and turn the border of input section red, also display error message
+$('form').on('submit', (e) => {
+     const $nameInput = $('#name');
+     const $mailInput = $('#mail');
+     const $cardNumInput = $('#cc-num');
+     const $zipCodeInput = $('#zip');
+     const $cvvInput = $('#cvv');
+
+    function showOrHideError(validator, selector) {
+        if(!validator(selector.val())) {
+            selector.prev().css('color', 'red');
+            selector.css('border-color','red');
+            selector.next().css('display','inherit');
+            e.preventDefault();
+        } else {
+            selector.prev().css('color', 'initial');
+            selector.css('border-color','#c1deeb');
+            selector.next().css('display','none');
+        }
+    }
+     
+    showOrHideError(isValidUsername, $nameInput);
+    showOrHideError(isValidEmail, $mailInput);
+
+    if(!isValidCheckbox()) {
+        $('.activities legend').css('color', 'red');
+        $('.activities legend').next().css('display','inherit');
+        e.preventDefault();
+    } else {
+        $('.activities legend').css('color', '#184f68');
+        $('.activities legend').next().css('display','none');
+    }
+    
+    if($('#payment option:selected').val() === 'credit card') {
+        showOrHideError(isValidCardNum, $cardNumInput);
+        showOrHideError(isValidZipCode, $zipCodeInput);
+        showOrHideError(isValidCVV, $cvvInput);
+    }
+});
+
+
+
