@@ -4,7 +4,6 @@
  * Basic Info Section
  *  
  */
-
 //focus on the first text field
 $('input[type="text"]:first').focus();
 
@@ -27,7 +26,6 @@ $('#title').on('change', event => {
  * T-Shirt Info Section
  *  
  */
-
 //hide the T-shirt 'color' menu when the page is loaded
 $('#colors-js-puns').hide();
 
@@ -71,84 +69,69 @@ $('#design').on('change', event => {
  * Register for Activities Info Section
  *  
  */
+// create and append element to store the total activity cost
+$('.activities').append('<p id="total"></p>');
+// create variable to store total cost
+let totalCost = 0;
 
-//add an event listener to Register for Activities Info section
-$('.activities').on('click', (e) => {
-    //get the value of name attributes and assign to a variable
-    const $name = $(e.target).attr('name');
-    //create a variable to contain the sum of costs
-    let totalCost = 0;
+// change event listener for activity section - event delegation is helpful here
+$('.activities').on('change', (e) => {
+    // variable to store dollar amount of checkbox that was just checked or unchecked
+    let cost;
+    const $act = $(e.target).parent().text();
+    const regexCost = /\$(\d+)$/;
 
-    //create a function to make competing activities disabled
-    function makeDisabled(value) {
-        $("input[name='"+value+"']").attr('disabled', true);
-        $("input[name='"+value+"']").parent().css('color', 'gray');
-    }
+    if($act.match(regexCost) !== null){
+        cost = RegExp.$1;
+    } 
+  
+    // variable to store the day and time of checkbox that was just checked or unchecked
+    let time;
+    const regexTime = /—([\w\d- ]+),/;
 
-    //create a function to restore competing activities to its original state
-    function cancelDisabled(value) {
-        $("input[name='"+value+"']").attr('disabled', false);
-        $("input[name='"+value+"']").parent().css('color', '');
-    }
+    if($act.match(regexTime) !== null){
+        time = RegExp.$1;
+    };
 
-    //set conditional statements to make checkboxes be selectable by conditions
-    switch ($name) {
-        case 'js-frameworks':
-            if($(e.target).is(':checked')) {
-                makeDisabled('express');
-            } else {
-                cancelDisabled('express');
-            } 
-            break;
-        case 'js-libs':
-            if($(e.target).is(':checked')) {
-                makeDisabled('node');
-            } else {
-                cancelDisabled('node');
-            } 
-            break;
-        case 'express':
-            if($(e.target).is(':checked')) {
-                makeDisabled('js-frameworks');
-            } else {
-                cancelDisabled('js-frameworks');
-            } 
-            break;
-        case 'node':
-            if($(e.target).is(':checked')) {
-                makeDisabled('js-libs');
-            } else {
-                cancelDisabled('js-libs');
-            } 
-            break; 
-    }
-
-    //loop through checked elements to find the cost of each activities 
-    //and them to the variable totalCost
-    $('input:checked').each(function() {
-        let string = $(this).parent().text();
-        let regex = /\d{3}/;
-        let cost = string.match(regex);
-        totalCost += parseInt(cost[0]);
-    });
-
-    //create a p element to display the total cost of selected activities
-    //and append it if the p element is not created before
-    //if the element already exists, just update the total
-    if($('.activities p').length === 0) {
-        const $total = $('<p>Total: $'+ totalCost + '</p>');
-        $('.activities').append($total);
+    // conditional to see if box was checked or unchecked
+    if($(e.target).prop('checked')) {
+    // if box was checked 
+        // add cost to total
+        // loop over all checkboxes
+        // conditional to see if checkboxes[i] matches day and time of checkbox that was checked and if so, disable checkboxes[i]
+        totalCost += parseInt(cost);
+        $('.activities label').each(function(index, element) {
+            $text =  $(element).text();
+            $text.match(regexTime);
+            const elementTime = RegExp.$1;
+        
+            if(elementTime === time) {
+                $(element).css('color', 'gray');
+                $(element).children().attr('disabled', true);
+                $(e.target).attr('disabled', false);
+                $(e.target).parent().css('color', '');
+            }
+        });
     } else {
-        $('.activities p').html('<p>Total: $'+ totalCost + '</p>');
+    // if box was unchecked
+        // subtract cost from total
+        // loop over all checkboxes
+        // conditional to see if checkboxes[i] matches day and time of checkbox that was checked and if so, enable checkboxes[i]
+        totalCost -= parseInt(cost);
+        $('.activities label').each(function(index, element) {
+            $text =  $(element).text();
+            $text.match(regexTime);
+            const elementTime = RegExp.$1;
+        
+            if(elementTime === time) {
+                $(element).css('color', '');
+                $(element).children().attr('disabled', false);
+            }
+        });
     }
-    
-    //if the total is greater than 0, display the p element
-    //otherwise, hide the element
-    if(totalCost > 0) {
-        $('.activities p').show();
-    } else {
-        $('.activities p').hide();
-    }
+
+    // lastly, update the cost element to equal the adjusted cost total  
+    $('#total').text("Total: $" + totalCost);    
 });
 
 /**
@@ -156,7 +139,6 @@ $('.activities').on('click', (e) => {
  * Payment Info Section
  *  
  */
-
 //add the hidden attribute to "Select Payment Method" option 
 //so that an user should select one of payment options
 $('#payment option:first').attr('hidden', true);
@@ -195,7 +177,6 @@ $('#payment').on('change', (e) => {
  * Form validation
  *  
  */
-
  //pick elements to check validation
 const $nameInput = $('#name');
 const $mailInput = $('#mail');
@@ -214,7 +195,7 @@ $('<span>Enter 3-digit number.</span>').insertAfter('#cvv');
 
 //make functions to check if the each section is acceptable
 function isValidUsername(username) {
-    return /^[a-zA-Z_]+$/.test(username);
+    return /^[a-zA-Z- ]+$/.test(username);
 }
 function isValidEmail(email) {
     return /^[^@]+@[^@.]+\.[a-z]+$/i.test(email);
